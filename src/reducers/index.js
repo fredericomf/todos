@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux';
 
 import todoListReducer from './todoListReducer';
+import editingTodoReducer from './editingTodoReducer';
 
 /**
  * NOTA_ESTUDO:
@@ -15,7 +16,8 @@ import todoListReducer from './todoListReducer';
  * }
  */
 const rootReducer = combineReducers({
-    todos: todoListReducer
+    todos: todoListReducer,
+    editingTodo: editingTodoReducer
 });
 
 export default rootReducer;

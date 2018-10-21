@@ -1,29 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
+import {connect} from 'react-redux';
+import { setTodoText, addTodo, updateTodo} from '../actions';
 import Input from './Input';
 
-export default class TodoForm extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            text: ''
-        }
-    }
+export class TodoForm extends React.Component {
 
     onChangeText(text) {
-        this.setState({
-            text
-        });
+        this.props.dispatchSetTodoText(text);
     }
 
     onPress() {
-        console.log(this.state.text);
+        const {todo} = this.props;
+
+        if(todo.id){
+            this.props.dispatchUpdateTodo(todo);
+        }else{
+            const {text} = todo;
+            this.props.dispatchAddTodo(text);
+        }
     }
 
     render() {
-        const { text } = this.state;
+        const { text, id } = this.props.todo;
         return (
             <View style={styles.formContainer}>
                 <View style={styles.inputContainer}>
@@ -33,7 +32,7 @@ export default class TodoForm extends React.Component {
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button
-                        title='Add'
+                        title={ id ? 'save' : 'add'}
                         onPress={() => this.onPress()} />
                 </View>
             </View>
@@ -52,3 +51,31 @@ const styles = StyleSheet.create({
         flex: 1
     }
 });
+
+// NOTA_ESTUDO: Essa implementação foi trocada pelo Shortcut
+// const mapDispatchToProps = dispatch => {
+//     return {
+//         dispatchAddTodo: text => dispatch(addTodo(text))
+//     }
+// }
+
+// NOTA_ESTUDO: Abaixo é um shortcut para a implementação anterior
+// const mapDispatchToProps = {
+//     dispatchAddTodo: addTodo
+// }
+
+const mapStateToProps = state => {
+    return {
+        todo: state.editingTodo
+    }
+}
+
+// Currying
+export default connect(
+    mapStateToProps, 
+    {
+        dispatchSetTodoText: setTodoText,
+        dispatchAddTodo: addTodo,
+        dispatchUpdateTodo: updateTodo
+    }
+    )(TodoForm);
